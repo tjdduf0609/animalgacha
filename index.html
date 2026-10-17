@@ -195,7 +195,7 @@
     } else if (res && res.status === 429) {
       showMessage('오늘 뽑기 횟수를 모두 사용했습니다. 내일 다시 도전해 주세요.'); setRemaining(0);
     } else {
-      showMessage('서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.');
+      showMessage('서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.' + (res && res.data && res.data.detail ? ' (' + res.data.detail + ')' : ''));
     }
     if (!exhausted) { $('pull').disabled = false; $('pull').textContent = '카드 뽑기'; }
   }
@@ -203,7 +203,7 @@
   function doPull(){
     if (busy || exhausted) return;
     var name = $('name').value.trim();
-    if (!name) { say('동물 병원 닉네임을 입력해 주세요.', true); $('name').focus(); return; }
+    if (!name) { say('동물병원 닉네임을 입력해 주세요.', true); $('name').focus(); return; }
     if (!team) { say('소속을 선택해 주세요.', true); return; }
     say('');
     try { localStorage.setItem('ah_gacha_profile', JSON.stringify({ name:name, team:team })); } catch (e) {}

@@ -58,12 +58,15 @@ function sbHeaders() {
   if (key.startsWith('eyJ')) h.Authorization = 'Bearer ' + key;   // 옛 JWT 키만 Authorization 헤더를 함께 보냄
   return h;
 }
+async function errCode(r) {            // Supabase 오류 코드(예: PGRST202)만 꺼내 원인 파악에 사용
+  try { const j = await r.json(); return j && j.code ? ' ' + String(j.code).slice(0, 12) : ''; } catch (e) { return ''; }
+}
 async function consume(day, ipHash) {
   const r = await fetch(process.env.SUPABASE_URL + '/rest/v1/rpc/gacha_consume', {
     method: 'POST', headers: sbHeaders(),
     body: JSON.stringify({ p_day: day, p_ip_hash: ipHash, p_limit: LIMIT }),
   });
-  if (!r.ok) throw new Error('rpc ' + r.status);
+  if (!r.ok) throw new Error('rpc ' + r.status + (await errCode(r)));
   const n = await r.json();
   if (typeof n !== 'number') throw new Error('rpc result');
   return n;
@@ -71,7 +74,7 @@ async function consume(day, ipHash) {
 async function usedToday(day, ipHash) {
   const url = process.env.SUPABASE_URL + '/rest/v1/gacha_usage?select=used&day=eq.' + day + '&ip_hash=eq.' + ipHash;
   const r = await fetch(url, { headers: sbHeaders() });
-  if (!r.ok) throw new Error('select ' + r.status);
+  if (!r.ok) throw new Error('select ' + r.status + (await errCode(r)));
   const rows = await r.json();
   return rows.length ? rows[0].used : 0;
 }
@@ -99,7 +102,7 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'method' });
   } catch (e) {
     console.error('gacha api error:', e && e.message);   // IP 등 개인정보는 로그에 남기지 않음
-    return res.status(503).json({ error: 'service' });
+    return res.status(503).json({ error: 'service', detail: String((e && e.message) || '').slice(0, 40) });
   }
 };
 

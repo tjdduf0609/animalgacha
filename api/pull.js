@@ -53,8 +53,10 @@ function pull() {
 
 // ---- Supabase (서비스 키는 서버에서만 사용) ----
 function sbHeaders() {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  return { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' };
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;   // 새 secret 키(sb_secret_...)와 옛 service_role 키(eyJ...) 모두 사용 가능
+  const h = { apikey: key, 'Content-Type': 'application/json' };
+  if (key.startsWith('eyJ')) h.Authorization = 'Bearer ' + key;   // 옛 JWT 키만 Authorization 헤더를 함께 보냄
+  return h;
 }
 async function consume(day, ipHash) {
   const r = await fetch(process.env.SUPABASE_URL + '/rest/v1/rpc/gacha_consume', {

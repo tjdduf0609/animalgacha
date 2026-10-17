@@ -97,8 +97,8 @@
 
       <section class="patient-card">
         <p class="eyebrow">참가 등록</p>
-        <label class="field-label" for="name">동물병원 닉네임</label>
-        <input id="name" type="text" maxlength="16" autocomplete="off" placeholder="동물병원 닉네임">
+        <label class="field-label" for="name">동물 병원 닉네임</label>
+        <input id="name" type="text" maxlength="16" autocomplete="off" placeholder="동물 병원 닉네임">
         <span class="field-label" id="team-label">소속</span>
         <div class="chips" id="chips" role="radiogroup" aria-labelledby="team-label"></div>
         <p class="hint" id="msg"></p>
@@ -114,7 +114,7 @@
       <div class="crt-monitor" aria-live="polite">
         <div class="crt-screen" id="screen">
           <p class="crt-title">&#10022; 카드 분석 결과 &#10022;</p>
-          <p class="crt-idle" id="idle">동물병원 닉네임과 팀을 입력하고 카드를 뽑아 주세요.</p>
+          <p class="crt-idle" id="idle">동물 병원 닉네임과 팀을 입력하고 카드를 뽑아 주세요.</p>
           <p class="crt-scan" id="scan" hidden>분석 중<i>.</i><i>.</i><i>.</i></p>
           <div id="result" hidden>
             <span class="badge" id="r-rar"></span>
@@ -203,7 +203,7 @@
   function doPull(){
     if (busy || exhausted) return;
     var name = $('name').value.trim();
-    if (!name) { say('동물병원 닉네임을 입력해 주세요.', true); $('name').focus(); return; }
+    if (!name) { say('동물 병원 닉네임을 입력해 주세요.', true); $('name').focus(); return; }
     if (!team) { say('소속을 선택해 주세요.', true); return; }
     say('');
     try { localStorage.setItem('ah_gacha_profile', JSON.stringify({ name:name, team:team })); } catch (e) {}

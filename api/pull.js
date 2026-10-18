@@ -41,7 +41,7 @@ function hashIp(ip) {
 // ---- 뽑기 (등급은 카드 이름과 무관하게 매번 따로) ----
 function rollRarity() {
   const r = crypto.randomInt(10000);
-  return r < 5 ? 'SSR' : (r < 1005 ? 'SR' : 'R');
+  return r < 100 ? 'SSR' : (r < 1100 ? 'SR' : 'R');
 }
 function pull() {
   const name = CARDS[crypto.randomInt(CARDS.length)];

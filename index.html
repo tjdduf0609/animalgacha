@@ -93,12 +93,12 @@
     <div class="scene">
       <div class="cam-badge"><span class="rec-dot"></span>CAM-05</div>
       <div class="shift-badge">카드 분석실</div>
-      <div class="monitor-panel">오늘 남은 횟수<br><span class="monitor-value" id="count">-</span>회</div>
+      <div class="monitor-panel">이번 접속<br><span class="monitor-value" id="count">0</span>회</div>
 
       <section class="patient-card">
         <p class="eyebrow">참가 등록</p>
-        <label class="field-label" for="name">동물 병원 닉네임</label>
-        <input id="name" type="text" maxlength="16" autocomplete="off" placeholder="동물 병원 닉네임">
+        <label class="field-label" for="name">동물병원 닉네임</label>
+        <input id="name" type="text" maxlength="16" autocomplete="off" placeholder="동물병원 닉네임">
         <span class="field-label" id="team-label">소속</span>
         <div class="chips" id="chips" role="radiogroup" aria-labelledby="team-label"></div>
         <p class="hint" id="msg"></p>
@@ -114,7 +114,7 @@
       <div class="crt-monitor" aria-live="polite">
         <div class="crt-screen" id="screen">
           <p class="crt-title">&#10022; 카드 분석 결과 &#10022;</p>
-          <p class="crt-idle" id="idle">동물 병원 닉네임과 팀을 입력하고 카드를 뽑아 주세요.</p>
+          <p class="crt-idle" id="idle">동물병원 닉네임과 팀을 입력하고 카드를 뽑아 주세요.</p>
           <p class="crt-scan" id="scan" hidden>분석 중<i>.</i><i>.</i><i>.</i></p>
           <div id="result" hidden>
             <span class="badge" id="r-rar"></span>
@@ -126,30 +126,45 @@
         </div>
       </div>
 
-      <p class="footnote">하루에 20번까지 뽑을 수 있고, 같은 인터넷 환경(IP)에서는 횟수를 함께 사용합니다. 매일 0시(한국 시간)에 초기화되며 기록은 쌓이지 않습니다. 하루에 한 번만 제출할 수 있으니, 제출할 결과가 나오면 위 모니터 화면을 캡처해 제출해 주세요.</p>
+      <p class="footnote">뽑는 횟수는 무제한이며 기록은 쌓이지 않습니다. 하루에 한 번만 제출할 수 있으니, 제출할 결과가 나오면 위 모니터 화면을 캡처해 제출해 주세요.</p>
     </div>
   </div>
 </div>
 <script>
 (function(){
   'use strict';
+  var CARDS = ["치의과와", "Dr. Harlow", "Conticinio", "강형욱", "당신의 하트를 ᴄʜᴇᴄᴋ-ɪɴ ᰔ", "! 또뷰징 10.18 00:55까지 죽은 계정", "(. ^ ^)", "*EARLY ACCESS*", ".mp4", "012初戀♡", "113", "17171771", "17520", "27 살 연하", "28 살 이하 성공하면 다 처맞습니다", "404", "60’ Cardin", "7월의 연서", "AC/DC", "add sugared water", "Agrapha", "araptaudience", "askyfullofstars", "Attention", "B4S2", "BECF BBF3 BAED", "BIRDS OF A FEATHER", "bk", "che la mia ferita sia mortale", "cloud 9", "Crushed Velvet", "deus ex machina", "double take", "Evening primrose", "fire", "Galatea", "Good Luck, Babe!", "Hika", "HitMeUp", "HOME & SWEET with", "Immaterial White", "in case you miss me", "intricate mess", "Jamais vu", "L'Étranger", "lov3 bomb", "Love 119", "LRiverty70", "Lx0=1", "M1se en place", "Melatonin 蘭mg", "myself", "No.6", "NoNameD", "Outsider", "PIECE OF CAKE", "punch-drunk", "QuickSilver", "Revers de vague", "SEPARATXON ANXIETY", "Shall We", "shampoo卣", "Sihaya", "summer virus", "Theo of Golden", "this time is real", "TinyAnomaly", "treat me so bad", "unsolved", "utatane", "xyz 2", "YOU&愛Heaven", "Zeigarnik effect;", "ZOMBIE", "​할루시네이션 발생", "← 인어 섬 보기 전", "✘", "う", "ホカホカ", "ㄱ", "ㄹㅇ루다가 수의사", "人間なんか大嫌い", "天命■倫", "天軍主", "孫悟空", "心海", "恋色", "死ぬな！", "沈默의 바다에 잠겨", "波濤", "猫又", "玄", "矮행성", "罪와 罰", "魑魅魍魎", "가나디", "감자쿵야", "강 건너 저승에서까지", "강혜정", "개껌 전문 처방", "게니오", "고냐니", "고백 받은 적 없는데?", "고통정보센터", "광", "그대 이름은 장미", "그런 걸 왜 줘", "그럼 내가 지금까지 한 건 공갈 협박이야?", "그림 밖은 위험해", "까라면 까", "꿀 대신 저 넣어도 돼요?", "나 ♡ 환자", "나의 M이 되어 줘", "나이롱 의사", "내 선배의 상사도 좋아", "내가 금연하는 여자는 싫다 해서", "내가 애쓰면 넌", "냐냐냥!!", "너 그거 뇌진탕이야", "너 바보야?", "능이백숙", "니 뒤에", "니 죽이는 생각", "다마고치", "다시 해볼까?", "담배 2 시간 정도는 참을 줄 아는 남자", "데드슬로우", "도둑이 든 여름", "독사", "돈 많이 없고 건실한 와이프", "마이너스인연봉도연봉이라고할수있습니까", "만조를 기다리며", "매튜", "맹해라", "메스로 귀찮게 해도 될까요?", "멘헤라", "면허는 없지만 내 구급차에 타", "목마른 파랑", "몰랐어", "뭐가미안한데", "미세 행복 도감", "미에로 화이바 사이다가 아니라", "백만 대학원생 양성중", "버이흐피힝", "부다삥 고야", "부재중 40 통 뭔데", "분명 불법적인 일을 하고 있을 것", "불법 사이코 저*질 인간", "비서님이 너무해", "비와 마중", "빌려 온 고양이", "사랑", "사랑을 찾고 있어요…….", "선호 외계인", "선호 회사원", "신성모DOG", "아뢰되 주", "아저씨 보면 별이 보여요", "아프면 손 들어", "아홉 개의 문어다리교", "야간근무수칙준수", "야쿠자회장그딴것내가해야돼", "어 형이야", "어뷰징용 보관 계정 언급해도 못 봅니다.", "엄", "연하남", "연하냠", "오렌지 나무 아래서", "왜 답장 안 하고 자요", "왜ᴷᵉᵉᵖ ʸᵒᵘʳ ᴴᵉᵃᵈ ᴰᵒʷⁿ", "우와와타쿠타쿠", "유교남", "은퇴한토벌랭커입니다현재풀뽑으며생계유지중입니다", "의사 대행 알바", "이름", "이세계 착한 인턴", "이에로 사이다는 없다는데여", "이제 부인도 안 하네요", "인간만의 술.아.지.", "인어 섬 본 후 →", "있는 송충이 다 줄 겁니다", "저는 낯짝 가리는데요", "절대사기꾼아닙니다믿어주세요저는영능력자입니다", "정예로움", "제가 낯을 가려서", "제가미안해요", "제가입원하고싶습니다", "제물이 너라고요", "제물이 뭐라고요?", "젠지 세대", "주먹밥쿵야", "줄 건 줘 친구", "지옥의 도살견", "지주막하출혈", "챙중챙", "최 난리", "최줴이야", "카카오 56%", "커피는 없습니다", "타블로", "평점0.1", "폐업하겠습니다", "포식", "폭꿍", "하이스코어 걸", "한대", "한잎", "한정선이누군데", "항아", "헤븐이즈어트래픽잼온더405", "헤어지자고? 나 지금 쓰껄한데?", "혈관이 예쁘시네요", "화아아악 죽이세유", "화타", "환자야 명심해 너에겐 테이저가 있어", "六:二"];
+  var ZERO_LIST = ["치의과와", "Conticinio", "강형욱", "당신의 하트를 ᴄʜᴇᴄᴋ-ɪɴ ᰔ"];
   var TEAMS = ['원무', '진료', '방재', '보안', '인턴'];
+  var RANGE = { R:[1, 10000], SR:[10001, 20000], SSR:[20001, 100000] };
   var SCAN_MS = 900;
 
+  var ZERO = {};
+  ZERO_LIST.forEach(function(n){ ZERO[n] = true; });
+
+  function secureInt(n){
+    var c = window.crypto || window.msCrypto;
+    if (!c || !c.getRandomValues) return Math.floor(Math.random() * n);
+    var buf = new Uint32Array(1), limit = Math.floor(4294967296 / n) * n;
+    do { c.getRandomValues(buf); } while (buf[0] >= limit);
+    return buf[0] % n;
+  }
+  // 등급은 카드 이름과 무관하게 매번 따로 굴림
+  function rollRarity(){ var r = secureInt(10000); return r < 100 ? 'SSR' : (r < 1100 ? 'SR' : 'R'); }
+  function rollStat(rar){ var lo = RANGE[rar][0], hi = RANGE[rar][1]; return lo + secureInt(hi - lo + 1); }
+  function pull(){
+    var name = CARDS[secureInt(CARDS.length)];
+    var rar = rollRarity();
+    return { name:name, rar:rar, stat: ZERO[name] ? 0 : rollStat(rar) };
+  }
+
   function $(id){ return document.getElementById(id); }
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+  function stamp(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()); }
   function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 
-  var team = '', busy = false, exhausted = false;
+  var team = '', busy = false, count = 0;
   try { var p = JSON.parse(localStorage.getItem('ah_gacha_profile') || 'null'); if (p) { $('name').value = p.name || ''; team = p.team || ''; } } catch (e) {}
-
-  // 뽑기와 횟수 제한은 서버(/api/pull)에서 처리합니다.
-  function api(method){
-    var opt = { method:method, headers:{ 'Accept':'application/json' }, cache:'no-store' };
-    if (method === 'POST') { opt.headers['Content-Type'] = 'application/json'; opt.body = '{}'; }
-    return fetch('/api/pull', opt).then(function(r){
-      return r.json().then(function(j){ return { status:r.status, data:j }; }, function(){ return { status:r.status, data:null }; });
-    });
-  }
 
   function renderChips(){
     var box = $('chips'); box.innerHTML = '';
@@ -163,18 +178,9 @@
   }
   function say(text, err){ var m = $('msg'); m.className = 'hint' + (err ? ' hint--error' : ''); m.textContent = text; }
 
-  function lock(label){ exhausted = true; $('pull').disabled = true; $('pull').textContent = label; }
-  function setRemaining(n){
-    $('count').textContent = String(n);
-    if (n <= 0) lock('오늘은 모두 사용했습니다');
-  }
-  function showMessage(text){
-    $('screen').className = 'crt-screen';
-    $('scan').hidden = true; $('result').hidden = true;
-    $('idle').hidden = false; $('idle').textContent = text;
-  }
   function show(r, name){
-    $('screen').className = 'crt-screen is-' + r.rar;
+    var screen = $('screen');
+    screen.className = 'crt-screen is-' + r.rar;
     $('r-rar').className = 'badge rar-' + r.rar; $('r-rar').textContent = r.rar;
     $('r-name').textContent = r.name;
     var st = $('r-stat'); st.innerHTML = '';
@@ -184,24 +190,12 @@
     var small = document.createElement('small'); small.textContent = '능력치';
     st.appendChild(span); st.appendChild(small);
     $('r-who').textContent = name + ' · ' + (team === '인턴' ? '인턴' : team + '팀');
-    $('r-stamp').textContent = r.at;          // 서버 시각(한국 시간)
+    $('r-stamp').textContent = stamp(new Date());
     $('scan').hidden = true; $('idle').hidden = true; $('result').hidden = false;
   }
 
-  function finishPull(res, name){
-    busy = false;
-    if (res && res.status === 200 && res.data && res.data.name) {
-      show(res.data, name); setRemaining(res.data.remaining);
-    } else if (res && res.status === 429) {
-      showMessage('오늘 뽑기 횟수를 모두 사용했습니다. 내일 다시 도전해 주세요.'); setRemaining(0);
-    } else {
-      showMessage('서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.' + (res && res.data && res.data.detail ? ' (' + res.data.detail + ')' : ''));
-    }
-    if (!exhausted) { $('pull').disabled = false; $('pull').textContent = '카드 뽑기'; }
-  }
-
   function doPull(){
-    if (busy || exhausted) return;
+    if (busy) return;
     var name = $('name').value.trim();
     if (!name) { say('동물병원 닉네임을 입력해 주세요.', true); $('name').focus(); return; }
     if (!team) { say('소속을 선택해 주세요.', true); return; }
@@ -210,17 +204,17 @@
     busy = true; $('pull').disabled = true; $('pull').textContent = '분석 중…';
     $('screen').className = 'crt-screen';
     $('idle').hidden = true; $('result').hidden = true; $('scan').hidden = false;
-    var started = Date.now();
-    function done(res){ setTimeout(function(){ finishPull(res, name); }, Math.max(0, SCAN_MS - (Date.now() - started))); }
-    api('POST').then(done, function(){ done(null); });
+    var r = pull();                       // 결과는 먼저 정해지고, 연출은 그 뒤에 보여줌
+    setTimeout(function(){
+      show(r, name);
+      count++; $('count').textContent = String(count);
+      busy = false; $('pull').disabled = false; $('pull').textContent = '카드 뽑기';
+    }, SCAN_MS);
   }
 
   $('pull').addEventListener('click', doPull);
   $('name').addEventListener('keydown', function(e){ if (e.key === 'Enter') doPull(); });
   renderChips();
-  api('GET').then(function(res){
-    if (res.status === 200 && res.data && typeof res.data.remaining === 'number') setRemaining(res.data.remaining);
-  }, function(){});
 })();
 </script>
 </body>

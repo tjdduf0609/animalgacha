@@ -154,7 +154,7 @@
   function rollStat(rar){ var lo = RANGE[rar][0], hi = RANGE[rar][1]; return lo + secureInt(hi - lo + 1); }
   function pull(){
     var name = CARDS[secureInt(CARDS.length)];
-    var rar = rollRarity();
+    var rar = ZERO[name] ? 'SSR' : rollRarity();      // 0점 카드는 항상 SSR
     return { name:name, rar:rar, stat: ZERO[name] ? 0 : rollStat(rar) };
   }
 
